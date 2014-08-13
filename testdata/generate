@@ -11,3 +11,6 @@ go run ./mk-zip.go team-2/* >| higgsml-test-team2.zip
 echo "::: generate team-3..."
 go run ./mk-zip.go team-3/* >| higgsml-test-team3.zip
 
+echo "::: generate team-4..."
+/bin/cp `which go-higgsml` team-4/code-1/.
+go run ./mk-zip.go team-4/code-?/* >| higgsml-test-team4.zip
