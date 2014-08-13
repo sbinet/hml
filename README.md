@@ -29,9 +29,11 @@ my-team
 ```
 
 where:
-- `higgsml-run` is the script (or binary) which runs the prediction
-- `higgsml-train` is the script (or binary) which runs the training
+- `higgsml-run` is the executable script (or binary) which runs the prediction
+- `higgsml-train` is the executable script (or binary) which runs the training
 
+(on *WINDOWS*, the scripts should be called `higgsml-run.bat` and
+`higgsml-train.bat`)
 
 In case you submit 2 codes, each code should have its own directory
 structure. *e.g.:*
