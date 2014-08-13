@@ -83,7 +83,8 @@ type Code struct {
 	Pred    string // path to prediction executable
 	Trained string // path to trained data parameters
 
-	Readme string // path to README file
+	License string // path to LICENSE file
+	Readme  string // path to README file
 
 	DoTraining bool
 
@@ -114,6 +115,10 @@ func NewCode(dir string, train bool) (Code, error) {
 		}
 		if strings.Contains(strings.ToLower(path), "readme") {
 			code.Readme = path
+		}
+
+		if strings.Contains(strings.ToLower(path), "license") {
+			code.License = path
 		}
 
 		if strings.Contains(strings.ToLower(path), "trained.dat") {
@@ -151,6 +156,10 @@ func NewCode(dir string, train bool) (Code, error) {
 
 	if code.Train != "" && code.Pred == "" {
 		code.Pred = code.Train
+	}
+
+	if code.License == "" {
+		return code, fmt.Errorf("hml: could not find a LICENSE file under [%s]", code.Root)
 	}
 
 	return code, err
