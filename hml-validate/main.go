@@ -10,12 +10,25 @@ import (
 	"path/filepath"
 )
 
+var (
+	g_train = flag.Bool("train", false, "run the training")
+
+	trainfile = "train.csv"
+	testfile  = "test.csv"
+)
+
 func printf(format string, args ...interface{}) (int, error) {
 	return fmt.Fprintf(os.Stderr, format, args...)
 }
 
 func main() {
 	printf("::: higgsml-validate...\n")
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, " %s zipfile [[training.csv] test.csv]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
 
 	if flag.NArg() < 1 {
@@ -23,6 +36,24 @@ func main() {
 		flag.Usage()
 		os.Exit(1)
 	}
+
+	if flag.NArg() > 1 {
+		testfile = flag.Arg(1)
+	}
+	if flag.NArg() > 2 {
+		trainfile = flag.Arg(1)
+		testfile = flag.Arg(2)
+	}
+
+	for _, file := range []*string{&testfile, &trainfile} {
+		if !filepath.IsAbs(*file) {
+			name, err := filepath.Abs(*file)
+			if err == nil {
+				*file = name
+			}
+		}
+	}
+
 	rc := run()
 	os.Exit(rc)
 }
@@ -53,20 +84,7 @@ func run() int {
 		return 1
 	}
 
-	pwd, err := os.Getwd()
-	if err != nil {
-		printf("**error** %v\n", err)
-		return 1
-	}
-	defer os.Chdir(pwd)
-
-	err = os.Chdir(tmpdir)
-	if err != nil {
-		printf("**error** %v\n", err)
-		return 1
-	}
-
-	v, err := NewValidate(tmpdir)
+	v, err := NewValidate(tmpdir, *g_train)
 	if err != nil {
 		printf("**error** validating: %v\n", err)
 		return 1

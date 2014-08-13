@@ -10,17 +10,31 @@ import (
 )
 
 type Validate struct {
-	root  string // workdir
-	Train string // name of training executable
-	Prod  string // name of production executable
+	root    string // work dir
+	assets  string // submission dir
+	Train   string // path of training executable
+	Pred    string // path of prediction executable
+	Trained string // path to trained data
 
 	Readme string // name of the README file
+
+	DoTraining bool
+
+	trainfile string // path to training.csv file
+	testfile  string // path to test.csv file
 }
 
-func NewValidate(dir string) (Validate, error) {
+func NewValidate(dir string, train bool) (Validate, error) {
 	var err error
 
-	v := Validate{root: dir}
+	v := Validate{
+		root:       dir,
+		Trained:    "trained.dat",
+		DoTraining: train,
+	}
+
+	// FIXME: handle multiple-submissions zipfiles
+	//        presumably: 1 directory per submission.
 
 	exes := make([]string, 0)
 	// find executables
@@ -32,17 +46,21 @@ func NewValidate(dir string) (Validate, error) {
 			v.Readme = path
 		}
 
+		if strings.Contains(strings.ToLower(path), "trained.dat") {
+			v.Trained = path
+		}
+
 		// FIXME: better way ?
 		if !strings.Contains(fi.Mode().String(), "x") {
 			return nil
 		}
 		exes = append(exes, path)
 		// printf(">>> %s\n", path)
-		if strings.Contains(strings.ToLower(path), "train") {
+		if strings.Contains(strings.ToLower(path), "higgsml-train") {
 			v.Train = path
 		}
-		if strings.Contains(strings.ToLower(path), "prod") {
-			v.Prod = path
+		if strings.Contains(strings.ToLower(path), "higgsml-pred") {
+			v.Pred = path
 		}
 		return err
 	})
@@ -51,11 +69,21 @@ func NewValidate(dir string) (Validate, error) {
 		return v, fmt.Errorf("hml: could not find any suitable executable in zip-file")
 	}
 
-	if v.Train == "" && v.Prod == "" {
+	if v.Train == "" && v.Pred == "" {
 		// take first one
 		v.Train = exes[0]
-		v.Prod = exes[0]
+		v.Pred = exes[0]
 	}
+
+	if v.Train == "" && v.Pred != "" {
+		v.Train = v.Pred
+	}
+
+	if v.Train != "" && v.Pred == "" {
+		v.Pred = v.Train
+	}
+
+	v.assets = filepath.Dir(v.Pred)
 
 	return v, err
 }
@@ -63,14 +91,25 @@ func NewValidate(dir string) (Validate, error) {
 func (v Validate) Run() error {
 	var err error
 
-	printf("\n")
-	err = v.run_training()
+	// printf("root:   [%s]\n", v.root)
+	// printf("assets: [%s]\n", v.assets)
+
+	dir := filepath.Join(v.assets, ".higgsml-work")
+	err = os.MkdirAll(dir, 0755)
 	if err != nil {
 		return err
 	}
 
+	if v.DoTraining {
+		printf("\n")
+		err = v.run_training(dir)
+		if err != nil {
+			return err
+		}
+	}
+
 	printf("\n")
-	err = v.run_pred()
+	err = v.run_pred(dir)
 	if err != nil {
 		return err
 	}
@@ -78,22 +117,19 @@ func (v Validate) Run() error {
 	return err
 }
 
-func (v Validate) run_training() error {
+func (v Validate) run_training(dir string) error {
 	var err error
-	printf("::: run training...\n")
-	dir := filepath.Join(v.root, "hml-train")
-	err = os.MkdirAll(dir, 0755)
-	if err != nil {
-		return err
-	}
+	errch := make(chan error)
 
-	cmd := exec.Command(v.Train, "training.csv", "trained.dat")
+	printf("::: run training...\n")
+
+	cmd := exec.Command(v.Train, v.wdir("training.csv"), pdir(dir, "trained.dat"))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
-	cmd.Dir = dir
+	cmd.Dir = v.assets
 
-	errch := make(chan error)
+	start := time.Now()
 	go func() {
 		err = cmd.Start()
 		if err != nil {
@@ -109,35 +145,31 @@ func (v Validate) run_training() error {
 		cmd.Process.Kill()
 		return fmt.Errorf("hml: training timed out (%v)\n", duration)
 	case err = <-errch:
-		printf("::: run training... [ERR]\n")
 		break
 	}
 
 	if err != nil {
-		printf("::: run training... [ERR]\n")
+		printf("::: run training... [ERR] (delta=%v)\n", time.Since(start))
 		return err
 	}
 
-	printf("::: run training... [ok]\n")
+	printf("::: run training... [ok] (delta=%v)\n", time.Since(start))
 	return err
 }
 
-func (v Validate) run_pred() error {
+func (v Validate) run_pred(dir string) error {
 	var err error
-	printf("::: run prediction...\n")
-	dir := filepath.Join(v.root, "hml-prediction")
-	err = os.MkdirAll(dir, 0755)
-	if err != nil {
-		return err
-	}
+	errch := make(chan error)
 
-	cmd := exec.Command(v.Prod, "test.csv", "trained.dat", "scores_test.csv")
+	printf("::: run prediction...\n")
+
+	cmd := exec.Command(v.Pred, v.wdir("test.csv"), v.Trained, pdir(dir, "scores_test.csv"))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
-	cmd.Dir = dir
+	cmd.Dir = v.assets
 
-	errch := make(chan error)
+	start := time.Now()
 	go func() {
 		err = cmd.Start()
 		if err != nil {
@@ -157,10 +189,22 @@ func (v Validate) run_pred() error {
 	}
 
 	if err != nil {
-		printf("::: run prediction... [ERR]\n")
+		printf("::: run prediction... [ERR] (delta=%v)\n", time.Since(start))
 		return err
 	}
 
-	printf("::: run prediction... [ok]\n")
+	printf("::: run prediction... [ok] (delta=%v)\n", time.Since(start))
 	return err
+}
+
+func (v Validate) wdir(fname string) string {
+	pwd, err := os.Getwd()
+	if err != nil {
+		return fname
+	}
+	return filepath.Join(pwd, fname)
+}
+
+func pdir(dirs ...string) string {
+	return filepath.Join(dirs...)
 }
