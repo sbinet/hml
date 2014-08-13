@@ -1,9 +1,9 @@
 ## simple makefile to log workflow
-.PHONY: all test clean build install gen
+.PHONY: all test test-all clean build install gen
 
 GOFLAGS ?= $(GOFLAGS:)
 
-all: install test
+all: install
 
 
 build:
@@ -15,7 +15,7 @@ install:
 gen:
 	(cd testdata && ./generate)
 
-test: install gen
+test-all: install gen
 	@go test $(GOFLAGS) ./...
 	@echo ""
 	@echo ""
@@ -37,8 +37,6 @@ test: install gen
 	@echo "=== team-2 ==="
 	@hml-validate testdata/higgsml-test-team2.zip
 
-	@/bin/rm -rf testdata/team-2/go-higgsml
-
 	@echo ""
 	@echo ""
 	@echo "=== team-3 ==="
@@ -49,6 +47,28 @@ test: install gen
 	@echo "=== team-3 ==="
 	@hml-validate testdata/higgsml-test-team3.zip
 
+	@echo ""
+	@echo ""
+	@echo "=== team-4 ==="
+	@hml-validate -train testdata/higgsml-test-team4.zip
+
+	@echo ""
+	@echo ""
+	@echo "=== team-4 ==="
+	@hml-validate testdata/higgsml-test-team4.zip
+
+test: install gen
+	@go test $(GOFLAGS) ./...
+
+	@echo ""
+	@echo ""
+	@echo "=== team-1 ==="
+	@hml-validate testdata/higgsml-test-team1.zip
+
+	@echo ""
+	@echo ""
+	@echo "=== team-4 ==="
+	@hml-validate testdata/higgsml-test-team4.zip
 
 clean:
 	@go clean $(GOFLAGS) -i ./...
