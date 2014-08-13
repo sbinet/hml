@@ -8,3 +8,6 @@ go get github.com/sbinet/go-higgsml
 /bin/cp `which go-higgsml` team-2/.
 go run ./mk-zip.go team-2/* >| higgsml-test-team2.zip
 
+echo "::: generate team-3..."
+go run ./mk-zip.go team-3/* >| higgsml-test-team3.zip
+
