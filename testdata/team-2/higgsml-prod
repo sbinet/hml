@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "::: higgs-ml [production]..."
+echo "::: args:" $@
+
+go-higgsml -test=$@[0]
+
+echo "::: higgs-ml [production]... [ok]"
+exit 0
