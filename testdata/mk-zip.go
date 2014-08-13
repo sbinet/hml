@@ -4,21 +4,41 @@ package main
 
 import (
 	"archive/zip"
-	"bytes"
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 )
 
 func main() {
-	// Create a buffer to write our archive to.
-	buf := new(bytes.Buffer)
 
 	// Create a new zip archive.
-	w := zip.NewWriter(buf)
+	w := zip.NewWriter(os.Stdout)
 
 	// Add some files to the archive.
-	files := os.Args[1:]
+	files := make([]string, 0)
+	for _, path := range os.Args[1:] {
+		fi, err := os.Stat(path)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if !fi.IsDir() {
+			files = append(files, path)
+			continue
+		}
+		// recurse
+		err = filepath.Walk(path, func(path string, fi os.FileInfo, err error) error {
+			if fi.IsDir() {
+				return nil
+			}
+			files = append(files, path)
+			return err
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
 	for _, fname := range files {
 		log.Printf("deflating: %s\n", fname)
 		r, err := os.Open(fname)
@@ -57,8 +77,4 @@ func main() {
 		log.Fatal(err)
 	}
 
-	_, err = io.Copy(os.Stdout, buf)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
