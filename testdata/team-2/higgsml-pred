@@ -3,7 +3,11 @@
 echo "::: higgs-ml [prediction]..."
 echo "::: args:" $@
 
-go-higgsml -test=$@[0] || exit 1
+in=$1
+trained=$2
+out=$3
+
+go-higgsml $in $trained $out || exit 1
 
 echo "::: higgs-ml [prediction]... [ok]"
 exit 0

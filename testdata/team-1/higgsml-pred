@@ -3,6 +3,12 @@
 echo "::: higgs-ml [prediction]..."
 echo "::: args:" $@
 
+in=$1
+trained=$2
+out=$3
+
+echo ">>> input:  ${in}"
+echo ">>> output: ${out}"
 
 echo "::: higgs-ml [prediction]... [ok]"
 exit 0
