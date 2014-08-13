@@ -15,13 +15,80 @@ const (
 )
 
 type Validate struct {
-	root    string // work dir
-	assets  string // submission dir
-	Train   string // path of training executable
-	Pred    string // path of prediction executable
-	Trained string // path to trained data
+	root string // work dir
+	code []Code // list of submissions
+}
 
-	Readme string // name of the README file
+func NewValidate(dir string, train bool) (Validate, error) {
+	var err error
+	v := Validate{
+		root: dir,
+		code: make([]Code, 0, 2),
+	}
+
+	// find all 'higgsml-pred' executables
+	exes := make([]string, 0)
+	err = filepath.Walk(dir, func(path string, fi os.FileInfo, err error) error {
+		if fi.IsDir() {
+			return nil
+		}
+		if strings.Contains(strings.ToLower(path), runscript) {
+			exes = append(exes, path)
+		}
+		return err
+	})
+
+	if len(exes) <= 0 {
+		return v, fmt.Errorf("hml: could not find any suitable executable in zip-file")
+	}
+
+	if len(exes) > 2 {
+		return v, fmt.Errorf("hml: too many higgsml-pred executables (got=%d, max=%d)", len(exes), 2)
+	}
+
+	for _, exe := range exes {
+		dir := filepath.Dir(exe)
+		code, err := NewCode(dir, train)
+		if err != nil {
+			return v, err
+		}
+		code.Name = dir[len(v.root):]
+		if code.Name[0] == '/' {
+			code.Name = code.Name[1:]
+		}
+		v.code = append(v.code, code)
+	}
+
+	return v, err
+}
+
+func (v Validate) Run() error {
+	var err error
+
+	for i, code := range v.code {
+		start := time.Now()
+		printf("\n=== code submission #%d/%d (%s)...\n", i+1, len(v.code), code.Name)
+		err = code.run()
+		if err != nil {
+			return err
+		}
+		printf("=== code submission #%d/%d (%s)... [ok] (delta=%v)\n",
+			i+1, len(v.code), code.Name,
+			time.Since(start),
+		)
+	}
+
+	return err
+}
+
+type Code struct {
+	Root    string // directory containing sources/binaries
+	Name    string // name of this code submission (e.g. team/code)
+	Train   string // path to training executable
+	Pred    string // path to prediction executable
+	Trained string // path to trained data parameters
+
+	Readme string // path to README file
 
 	DoTraining bool
 
@@ -29,13 +96,16 @@ type Validate struct {
 	testfile  string // path to test.csv file
 }
 
-func NewValidate(dir string, train bool) (Validate, error) {
+func NewCode(dir string, train bool) (Code, error) {
 	var err error
 
-	v := Validate{
-		root:       dir,
+	code := Code{
+		Root:       dir,
+		Name:       filepath.Base(dir),
 		Trained:    "trained.dat",
 		DoTraining: train,
+		trainfile:  trainfile,
+		testfile:   testfile,
 	}
 
 	// FIXME: handle multiple-submissions zipfiles
@@ -48,11 +118,11 @@ func NewValidate(dir string, train bool) (Validate, error) {
 			return nil
 		}
 		if strings.Contains(strings.ToLower(path), "readme") {
-			v.Readme = path
+			code.Readme = path
 		}
 
 		if strings.Contains(strings.ToLower(path), "trained.dat") {
-			v.Trained = path
+			code.Trained = path
 		}
 
 		// FIXME: better way ?
@@ -61,60 +131,54 @@ func NewValidate(dir string, train bool) (Validate, error) {
 		}
 		exes = append(exes, path)
 		// printf(">>> %s\n", path)
-		if strings.Contains(strings.ToLower(path), "higgsml-train") {
-			v.Train = path
+		if strings.Contains(strings.ToLower(path), trainscript) {
+			code.Train = path
 		}
-		if strings.Contains(strings.ToLower(path), "higgsml-pred") {
-			v.Pred = path
+		if strings.Contains(strings.ToLower(path), runscript) {
+			code.Pred = path
 		}
 		return err
 	})
 
 	if len(exes) <= 0 {
-		return v, fmt.Errorf("hml: could not find any suitable executable in zip-file")
+		return code, fmt.Errorf("hml: could not find any suitable executable in zip-file")
 	}
 
-	if v.Train == "" && v.Pred == "" {
+	if code.Train == "" && code.Pred == "" {
 		// take first one
-		v.Train = exes[0]
-		v.Pred = exes[0]
+		code.Train = exes[0]
+		code.Pred = exes[0]
 	}
 
-	if v.Train == "" && v.Pred != "" {
-		v.Train = v.Pred
+	if code.Train == "" && code.Pred != "" {
+		code.Train = code.Pred
 	}
 
-	if v.Train != "" && v.Pred == "" {
-		v.Pred = v.Train
+	if code.Train != "" && code.Pred == "" {
+		code.Pred = code.Train
 	}
 
-	v.assets = filepath.Dir(v.Pred)
-
-	return v, err
+	return code, err
 }
 
-func (v Validate) Run() error {
+func (code Code) run() error {
 	var err error
 
-	// printf("root:   [%s]\n", v.root)
-	// printf("assets: [%s]\n", v.assets)
-
-	dir := filepath.Join(v.assets, ".higgsml-work")
+	dir := filepath.Join(code.Root, ".higgsml-work")
 	err = os.MkdirAll(dir, 0755)
 	if err != nil {
 		return err
 	}
 
-	if v.DoTraining {
-		printf("\n")
-		err = v.run_training(dir)
+	if code.DoTraining {
+		err = code.run_training(dir)
 		if err != nil {
 			return err
 		}
+		printf("\n")
 	}
 
-	printf("\n")
-	err = v.run_pred(dir)
+	err = code.run_pred(dir)
 	if err != nil {
 		return err
 	}
@@ -122,17 +186,17 @@ func (v Validate) Run() error {
 	return err
 }
 
-func (v Validate) run_training(dir string) error {
+func (code Code) run_training(dir string) error {
 	var err error
 	errch := make(chan error)
 
 	printf("::: run training...\n")
 
-	cmd := exec.Command(v.Train, v.wdir("training.csv"), pdir(dir, "trained.dat"))
+	cmd := exec.Command(code.Train, code.wdir("training.csv"), pdir(dir, "trained.dat"))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
-	cmd.Dir = v.assets
+	cmd.Dir = code.Root
 
 	start := time.Now()
 	go func() {
@@ -162,17 +226,23 @@ func (v Validate) run_training(dir string) error {
 	return err
 }
 
-func (v Validate) run_pred(dir string) error {
+func (code Code) run_pred(dir string) error {
 	var err error
 	errch := make(chan error)
 
 	printf("::: run prediction...\n")
 
-	cmd := exec.Command(v.Pred, v.wdir("test.csv"), v.Trained, pdir(dir, "scores_test.csv"))
+	trained := code.Trained
+	if code.DoTraining {
+		// if we ran the training, then use that file instead.
+		trained = pdir(dir, "trained.dat")
+	}
+
+	cmd := exec.Command(code.Pred, code.wdir("test.csv"), trained, pdir(dir, "scores_test.csv"))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
-	cmd.Dir = v.assets
+	cmd.Dir = code.Root
 
 	start := time.Now()
 	go func() {
@@ -202,7 +272,7 @@ func (v Validate) run_pred(dir string) error {
 	return err
 }
 
-func (v Validate) wdir(fname string) string {
+func (code Code) wdir(fname string) string {
 	pwd, err := os.Getwd()
 	if err != nil {
 		return fname
