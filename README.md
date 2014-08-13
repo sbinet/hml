@@ -3,7 +3,7 @@ hml
 
 Tools to validate `Higgs-ML` challenge submissions.
 
-## Test a `zip` submission file
+## Layout of a `zip` submission file
 
 `zip` submission files **SHALL** have the following structure:
 
@@ -59,11 +59,16 @@ my-team
 |   |-- higgsml-run
 |   `-- higgsml-train
 `-- code-2
-|   |-- LICENSE
+    |-- LICENSE
     |-- README
     |-- higgsml-run
     `-- higgsml-train
 ```
+
+## `hml-validate`
+
+`hml-validate` is a tool to validate the content of a `zip` submission
+file, to make sure that `zip` file will be usable by `HEP` physicists.
 
 ### Install `hml-validate`
 
@@ -93,4 +98,14 @@ Archive: my-team.zip
 ::: bye.
 ::: higgs-ml [prediction]... [ok]
 ::: run prediction... [ok] (delta=15.903641153s)
+```
+
+### `hml-validate` help
+
+```sh
+$ hml-validate -help
+::: higgsml-validate...
+Usage of hml-validate:
+ hml-validate zipfile [[training.csv] test.csv]
+  -train=false: run the training
 ```
