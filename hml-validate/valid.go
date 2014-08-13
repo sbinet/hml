@@ -87,7 +87,7 @@ func (v Validate) run_training() error {
 		return err
 	}
 
-	cmd := exec.Command(v.Train, "training.csv", "trained.xml")
+	cmd := exec.Command(v.Train, "training.csv", "trained.dat")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
@@ -125,7 +125,7 @@ func (v Validate) run_pred() error {
 		return err
 	}
 
-	cmd := exec.Command(v.Prod, "test.csv", "trained.xml", "scores_test.csv")
+	cmd := exec.Command(v.Prod, "test.csv", "trained.dat", "scores_test.csv")
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
