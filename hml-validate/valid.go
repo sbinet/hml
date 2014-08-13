@@ -70,7 +70,7 @@ func (v Validate) Run() error {
 	}
 
 	printf("\n")
-	err = v.run_prod()
+	err = v.run_pred()
 	if err != nil {
 		return err
 	}
@@ -116,10 +116,10 @@ func (v Validate) run_training() error {
 	return err
 }
 
-func (v Validate) run_prod() error {
+func (v Validate) run_pred() error {
 	var err error
-	printf("::: run prod...\n")
-	dir := filepath.Join(v.root, "hml-prod")
+	printf("::: run prediction...\n")
+	dir := filepath.Join(v.root, "hml-prediction")
 	err = os.MkdirAll(dir, 0755)
 	if err != nil {
 		return err
@@ -145,11 +145,16 @@ func (v Validate) run_prod() error {
 	select {
 	case <-time.After(duration):
 		cmd.Process.Kill()
-		return fmt.Errorf("hml: prod timed out (%v)\n", duration)
+		return fmt.Errorf("hml: prediction timed out (%v)\n", duration)
 	case err = <-errch:
+		break
+	}
+
+	if err != nil {
+		printf("::: run prediction... [ERR]\n")
 		return err
 	}
 
-	printf("::: run prod... [ok]\n")
+	printf("::: run prediction... [ok]\n")
 	return err
 }
