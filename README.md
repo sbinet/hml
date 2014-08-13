@@ -29,8 +29,13 @@ my-team
 ```
 
 where:
-- `higgsml-run` is the executable script (or binary) which runs the prediction
-- `higgsml-train` is the executable script (or binary) which runs the training
+- `higgsml-run` (with that exact spelling) is the executable script
+  (or binary) which runs the prediction
+- `higgsml-train` (with that exact spelling) is the executable script
+  (or binary) which runs the training
+- `LICENSE` (or `LICENSE.txt`) contains an `OSI`-approved license
+- `README` (or `README.md` or `README.txt`) contains some
+  documentation about the code.
 
 (on `Windows (TM)`, the scripts should be called `higgsml-run.bat` and
 `higgsml-train.bat`)
