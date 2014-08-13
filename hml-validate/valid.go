@@ -103,7 +103,7 @@ func (v Validate) run_training() error {
 		errch <- cmd.Wait()
 	}()
 
-	duration := 5 * time.Minute
+	duration := 1 * time.Hour
 	select {
 	case <-time.After(duration):
 		cmd.Process.Kill()
