@@ -9,11 +9,6 @@ import (
 	"time"
 )
 
-const (
-	runscript   = "higgsml-run"
-	trainscript = "higgsml-train"
-)
-
 type Validate struct {
 	root string // work dir
 	code []Code // list of submissions
