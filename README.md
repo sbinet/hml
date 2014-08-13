@@ -72,6 +72,27 @@ my-team
     `-- higgsml-train
 ```
 
+### `zip` file generation
+
+A tool is available to generate a `zip` file according to the above
+rules.
+ [testdata/mk-zip.go](https://github.com/sbinet/hml/blob/master/testdata/mk-zip.go)
+
+```sh
+$ go run /path/to/mk-zip.go my-team >| my-team.zip
+
+deflating: my-team/code-1/LICENSE
+deflating: my-team/code-1/README.md
+deflating: my-team/code-1/go-higgsml
+deflating: my-team/code-1/higgsml-run
+deflating: my-team/code-1/higgsml-train
+deflating: my-team/code-2/LICENSE
+deflating: my-team/code-2/README.md
+deflating: my-team/code-2/higgsml-run
+deflating: my-team/code-2/higgsml-train
+deflating: my-team/code-2/higgsml_simplest_v2.py
+```
+
 ## `hml-validate`
 
 `hml-validate` is a tool to validate the content of a `zip` submission
