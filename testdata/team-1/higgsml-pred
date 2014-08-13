@@ -1,0 +1,8 @@
+#!/bin/sh
+
+echo "::: higgs-ml [prediction]..."
+echo "::: args:" $@
+
+
+echo "::: higgs-ml [prediction]... [ok]"
+exit 0

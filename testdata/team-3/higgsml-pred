@@ -1,0 +1,9 @@
+#!/bin/sh
+
+echo "::: higgs-ml [prediction]..."
+echo "::: args:" $@
+
+python2 higgsml_simplest_v2.py $@ || exit 1
+
+echo "::: higgs-ml [prediction]... [ok]"
+exit 0
