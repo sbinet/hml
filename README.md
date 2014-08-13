@@ -8,7 +8,7 @@ Tools to validate `Higgs-ML` challenge submissions.
 ### Install `hml-validate`
 
 ```sh
-$ go get github.com/sbinet/hml/...
+$ go get github.com/sbinet/hml/hml-validate
 ```
 
 ### Run `hml-validate`
@@ -21,13 +21,16 @@ Archive: my-team.zip
   inflating: my-team/higgsml-pred
   inflating: my-team/higgsml-training
 
-::: run training...
-::: higgs-ml [training]...
-::: args: training.csv trained.dat
-::: higgs-ml [training]... [ok]
-
 ::: run prediction...
 ::: higgs-ml [prediction]...
 ::: args: test.csv trained.dat scores_test.csv
+::: compute the score for the test file entries [test.csv]
+::: loop again on test file to load BDT score pairs
+::: sort on the score
+::: build a map key=id, value=rank
+::: you can now submit [scores_test.csv] to Kaggle website
+::: timing: 15.862965585s
+::: bye.
 ::: higgs-ml [prediction]... [ok]
+::: run prediction... [ok] (delta=15.903641153s)
 ```
