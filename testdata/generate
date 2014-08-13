@@ -4,7 +4,7 @@ echo "::: generate team-1..."
 go run ./mk-zip.go team-1/* >| higgsml-test-team1.zip
 
 echo "::: generate team-2..."
-go get -u -v github.com/sbinet/go-higgsml
+go get github.com/sbinet/go-higgsml
 /bin/cp `which go-higgsml` team-2/.
 go run ./mk-zip.go team-2/* >| higgsml-test-team2.zip
 
