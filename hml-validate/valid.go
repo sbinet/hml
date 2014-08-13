@@ -9,6 +9,11 @@ import (
 	"time"
 )
 
+const (
+	runscript   = "higgsml-run"
+	trainscript = "higgsml-train"
+)
+
 type Validate struct {
 	root    string // work dir
 	assets  string // submission dir
