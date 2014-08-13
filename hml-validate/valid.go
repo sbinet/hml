@@ -109,6 +109,12 @@ func (v Validate) run_training() error {
 		cmd.Process.Kill()
 		return fmt.Errorf("hml: training timed out (%v)\n", duration)
 	case err = <-errch:
+		printf("::: run training... [ERR]\n")
+		break
+	}
+
+	if err != nil {
+		printf("::: run training... [ERR]\n")
 		return err
 	}
 
