@@ -18,12 +18,14 @@ test: install
 	@echo ""
 	@echo ""
 	@echo "=== team-1 ==="
-	hml-validate testdata/higgsml-test-team1.zip
+	@hml-validate testdata/higgsml-test-team1.zip
 
 	@echo ""
 	@echo ""
 	@echo "=== team-2 ==="
-	hml-validate testdata/higgsml-test-team2.zip
+	@hml-validate testdata/higgsml-test-team2.zip
+
+	@/bin/rm -rf testdata/team-2/go-higgsml
 
 clean:
 	@go clean $(GOFLAGS) -i ./...
