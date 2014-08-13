@@ -111,3 +111,8 @@ Usage of hml-validate:
  hml-validate zipfile [[training.csv] test.csv]
   -train=false: run the training
 ```
+
+### Example
+
+An example of the expected `zip` file's content (and directory layout)
+can be found [here](https://github.com/sbinet/hml/tree/master/testdata/team-3)
