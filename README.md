@@ -149,7 +149,7 @@ Archive: my-team.zip
 $ hml-validate -help
 ::: higgsml-validate...
 Usage of hml-validate:
- hml-validate zipfile [[training.csv] test.csv]
+ hml-validate zipfile [test.csv [training.csv]]
   -train=false: run the training
 ```
 

@@ -25,7 +25,7 @@ func main() {
 	printf("::: higgsml-validate...\n")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, " %s zipfile [[training.csv] test.csv]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, " %s zipfile [test.csv [training.csv]]\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
@@ -41,8 +41,8 @@ func main() {
 		testfile = flag.Arg(1)
 	}
 	if flag.NArg() > 2 {
-		trainfile = flag.Arg(1)
-		testfile = flag.Arg(2)
+		testfile = flag.Arg(1)
+		trainfile = flag.Arg(2)
 	}
 
 	for _, file := range []*string{&testfile, &trainfile} {
