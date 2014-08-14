@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 
 # completely self contained
 # v2 20140522 : final ordering was buggy and too complicated. Simplified considerably
@@ -134,20 +134,20 @@ def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.
 
     iscore=headertest.index("myscore")
     if iscore<0:
-        print "ERROR could not find variable myscore"
+        print("ERROR could not find variable myscore")
         raise Exception # should not happen
 
-    print "Sort on the score " 
+    print("Sort on the score ") 
     # in the first version of the file, an auxilliary map was used, but this was useless
     alltestsorted=sorted(alltest,key=lambda entry: entry[iscore])
     # the RankOrder we want is now simply the entry number
 
-    print  "Final loop to write the submission file",ofname
+    print("Final loop to write the submission file",ofname)
     outputfile=open(ofname,"w")
     outputfile.write("EventId,RankOrder,Class\n")
     iid=headertest.index("EventId")
     if iid<0:
-        print "ERROR could not find variable EventId in test file"
+        print("ERROR could not find variable EventId in test file")
         raise Exception # should not happen
 
     rank=1 # kaggle wants to start at 1
@@ -165,7 +165,7 @@ def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.
         pass
 
     outputfile.close()
-    print " You can now submit ",ofname," to kaggle site"
+    print(" You can now submit ",ofname," to kaggle site")
 
     # delete big objects
     del alltest,alltestsorted
