@@ -131,10 +131,10 @@ func NewCode(dir string, train bool) (Code, error) {
 		}
 		exes = append(exes, path)
 		// printf(">>> %s\n", path)
-		if strings.Contains(strings.ToLower(path), trainscript) {
+		if strings.HasSuffix(strings.ToLower(path), trainscript) {
 			code.Train = path
 		}
-		if strings.Contains(strings.ToLower(path), runscript) {
+		if strings.HasSuffix(strings.ToLower(path), runscript) {
 			code.Pred = path
 		}
 		return err
