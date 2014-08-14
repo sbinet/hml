@@ -13,7 +13,7 @@ import (
 var (
 	g_train = flag.Bool("train", false, "run the training")
 
-	trainfile = "train.csv"
+	trainfile = "training.csv"
 	testfile  = "test.csv"
 )
 
@@ -37,6 +37,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	if !*g_train {
+		trainfile = ""
+	}
+
 	if flag.NArg() > 1 {
 		testfile = flag.Arg(1)
 	}
@@ -45,13 +49,24 @@ func main() {
 		trainfile = flag.Arg(2)
 	}
 
-	for _, file := range []*string{&testfile, &trainfile} {
+	for i, file := range []*string{&testfile, &trainfile} {
+		printf("file[%d]=%q\n", i, *file)
+		if *file == "" {
+			continue
+		}
 		if !filepath.IsAbs(*file) {
 			name, err := filepath.Abs(*file)
 			if err == nil {
 				*file = name
 			}
 		}
+		_, err := os.Lstat(*file)
+		if err != nil {
+			printf("**error** no such file [%s]\n", *file)
+			flag.Usage()
+			os.Exit(1)
+		}
+		printf("file[%d]=%q\n", i, *file)
 	}
 
 	rc := run()

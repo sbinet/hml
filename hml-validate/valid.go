@@ -196,7 +196,7 @@ func (code Code) run_training(dir string) error {
 
 	printf("::: run training...\n")
 
-	cmd := exec.Command(code.Train, code.wdir("training.csv"), pdir(dir, "trained.dat"))
+	cmd := exec.Command(code.Train, code.trainfile, pdir(dir, "trained.dat"))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
@@ -242,7 +242,7 @@ func (code Code) run_pred(dir string) error {
 		trained = pdir(dir, "trained.dat")
 	}
 
-	cmd := exec.Command(code.Pred, code.wdir("test.csv"), trained, pdir(dir, "scores_test.csv"))
+	cmd := exec.Command(code.Pred, code.testfile, trained, pdir(dir, "scores_test.csv"))
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
@@ -274,14 +274,6 @@ func (code Code) run_pred(dir string) error {
 
 	printf("::: run prediction... [ok] (delta=%v)\n", time.Since(start))
 	return err
-}
-
-func (code Code) wdir(fname string) string {
-	pwd, err := os.Getwd()
-	if err != nil {
-		return fname
-	}
-	return filepath.Join(pwd, fname)
 }
 
 func pdir(dirs ...string) string {
