@@ -22,20 +22,31 @@ func printf(format string, args ...interface{}) (int, error) {
 }
 
 func main() {
-	printf("::: higgsml-validate...\n")
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, "$ %s zipfile [test.csv [training.csv]]\n", os.Args[0])
-		fmt.Fprintf(os.Stderr,
-			"  - test.csv is a test file (taken from $PWD if not given.)\n"+
-				"  - training.csv is a training file (taken from $PWD if not given.)\n"+
-				"    training.csv is needed iif -train is enabled",
+		fmt.Fprintf(os.Stderr, `Usage: hml-validate zipfile-or-directory [test.csv [training.csv]]
+
+where:
+  - test.csv is a test file (taken from $PWD if not given.)
+  - training.csv is a training file (taken from $PWD if not given.)
+    training.csv is needed iif -train is enabled.
+
+ex:
+ $ hml-validate my-team
+ $ hml-validate my-team/
+ $ hml-validate my-team.zip
+ $ hml-validate my-team.tar.gz
+ $ hml-validate my-team /path/to/test.csv
+ $ hml-validate my-team /path/to/test.csv /path/to/training.csv
+
+options:
+`,
 		)
 		flag.PrintDefaults()
 	}
 
 	flag.Parse()
 
+	printf("::: higgsml-validate...\n")
 	if flag.NArg() < 1 {
 		printf("**error** hml-validate needs the path to a zip file\n")
 		flag.Usage()
