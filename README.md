@@ -3,6 +3,16 @@ hml
 
 Tools to validate `Higgs-ML` challenge submissions.
 
+- [hml](#user-content-hml)
+	- [Layout of a zip submission file](#user-content-layout-of-a-zip-submission-file)
+		- [zip file generation](#user-content-zip-file-generation)
+	- [hml-validate](#user-content-hml-validate)
+		- [Install hml-validate](#user-content-install-hml-validate)
+		- [Run hml-validate](#user-content-run-hml-validate)
+		- [hml-validate help](#user-content-hml-validate-help)
+		- [Example](#user-content-example)
+
+
 ## Layout of a `zip` submission file
 
 `zip` submission files **SHALL** have the following structure:
