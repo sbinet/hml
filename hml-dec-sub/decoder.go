@@ -29,7 +29,7 @@ func NewDecoder(r io.Reader) Decoder {
 func (dec *Decoder) ReadHeader() error {
 	var err error
 	row, err := dec.r.Read()
-	rt := reflect.TypeOf((*Event)(nil)).Elem()
+	rt := reflect.TypeOf((*Row)(nil)).Elem()
 	nmax := rt.NumField()
 	if len(row) < nmax {
 		nmax = len(row)
@@ -53,7 +53,7 @@ func (dec *Decoder) ReadHeader() error {
 	return err
 }
 
-func (dec *Decoder) Decode(evt *Event) error {
+func (dec *Decoder) Decode(data *Row) error {
 	if !dec.init {
 		if err := dec.ReadHeader(); err != nil {
 			return err
@@ -71,65 +71,65 @@ func (dec *Decoder) Decode(evt *Event) error {
 	// fmt.Printf("row: %q\n", row)
 
 	idx := 0
-	evt.SubmissionID, err = strconv.Atoi(row[idx])
+	data.SubmissionID, err = strconv.Atoi(row[idx])
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.DateSubmittedUTC, err = timeParse(timefmt, row[idx])
+	data.DateSubmittedUTC, err = timeParse(timefmt, row[idx])
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.TeamID, err = strconv.Atoi(row[idx])
+	data.TeamID, err = strconv.Atoi(row[idx])
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.TeamName = row[idx]
+	data.TeamName = row[idx]
 
 	idx++
-	evt.UserID, err = strconv.Atoi(row[idx])
+	data.UserID, err = strconv.Atoi(row[idx])
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.UserDisplayName = row[idx]
+	data.UserDisplayName = row[idx]
 
 	idx++
-	evt.PublicScore, err = parseFloat(row[idx], 64)
+	data.PublicScore, err = parseFloat(row[idx], 64)
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.PrivateScore, err = parseFloat(row[idx], 64)
+	data.PrivateScore, err = parseFloat(row[idx], 64)
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.IsSelected = strings.Contains(strings.ToLower(row[idx]), "true")
+	data.IsSelected = strings.Contains(strings.ToLower(row[idx]), "true")
 
 	idx++
-	evt.DateRescoredUTC, err = timeParse(timefmt, row[idx])
+	data.DateRescoredUTC, err = timeParse(timefmt, row[idx])
 	if err != nil {
 		fmt.Printf("%q -> %v\n", row[idx], err)
 		return err
 	}
 
 	idx++
-	evt.PrevPublicScore, err = parseFloat(row[idx], 64)
+	data.PrevPublicScore, err = parseFloat(row[idx], 64)
 	if err != nil {
 		return err
 	}
 
 	idx++
-	evt.PrevPrivateScore, err = parseFloat(row[idx], 64)
+	data.PrevPrivateScore, err = parseFloat(row[idx], 64)
 	if err != nil {
 		return err
 	}
