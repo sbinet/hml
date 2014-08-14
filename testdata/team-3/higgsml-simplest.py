@@ -43,8 +43,8 @@ def run():
 
 
 def do_train(fname="training.csv", trained="trained.dat"):
-    print "Reading in training file"
-    alltraining = list(csv.reader(open(fname,"rb"), delimiter=','))
+    print("Reading in training file")
+    alltraining = list(csv.reader(open(fname), delimiter=','))
 
     # first line is the list of variables
     headertraining        = alltraining[0]
@@ -59,7 +59,7 @@ def do_train(fname="training.csv", trained="trained.dat"):
     iid=headertraining.index("EventId")
     
     
-    print "Loop on training dataset and compute the score"
+    print("Loop on training dataset and compute the score")
 
     headertraining+=["myscore"]
     for entry in alltraining:
@@ -81,7 +81,7 @@ def do_train(fname="training.csv", trained="trained.dat"):
     # at this stage alltraining is a list (one entry per line) of list of variables
     # which can be conveniently accessed by getting the index from the header 
 
-    print "Loop again to determine the AMS, using threshold:",threshold
+    print("Loop again to determine the AMS, using threshold:",threshold)
     sumsig=0.
     sumbkg=0.
     iscore=headertraining.index("myscore")
@@ -100,19 +100,19 @@ def do_train(fname="training.csv", trained="trained.dat"):
         pass
     
     # ok now we have our signal (sumsig) and background (sumbkg) estimation
-    print " AMS computed from training file :",ams(sumsig,sumbkg),"( signal=",sumsig," bkg=",sumbkg,")"
+    print(" AMS computed from training file :",ams(sumsig,sumbkg),"( signal=",sumsig," bkg=",sumbkg,")")
     # delete big objects
     del alltraining
     
 
 def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.csv"):
-    print "Reading in test file"
-    alltest = list(csv.reader(open(fname,"rb"), delimiter=','))
+    print("Reading in test file")
+    alltest = list(csv.reader(open(fname), delimiter=','))
     headertest        = alltest[0]
     alltest=alltest[1:]
 
 
-    print "Compute the score for the test file entries "
+    print("Compute the score for the test file entries ")
 
     # recompute variable indices for safety 
     immc=headertest.index("DER_mass_MMC")
