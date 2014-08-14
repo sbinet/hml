@@ -54,7 +54,7 @@ func main() {
 	}
 	err = nil
 
-	for _, row := range rows[:10] {
+	for _, row := range rows {
 		fmt.Fprintf(os.Stdout, "%#v\n", row)
 	}
 
