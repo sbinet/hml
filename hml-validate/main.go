@@ -25,7 +25,12 @@ func main() {
 	printf("::: higgsml-validate...\n")
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, " %s zipfile [test.csv [training.csv]]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, "$ %s zipfile [test.csv [training.csv]]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr,
+			"  - test.csv is a test file (taken from $PWD if not given.)\n"+
+				"  - training.csv is a training file (taken from $PWD if not given.)\n"+
+				"    training.csv is needed iif -train is enabled",
+		)
 		flag.PrintDefaults()
 	}
 
