@@ -1,23 +1,48 @@
-//+build ignore
-
 package main
 
 import (
 	"archive/zip"
+	"flag"
+	"fmt"
 	"io"
 	"log"
 	"os"
 	"path/filepath"
 )
 
+var (
+	g_out = flag.String("o", "", "path to output zip file (STDOUT if empty)")
+)
+
 func main() {
 
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, " %s -o out.zip file1 [file2 [dir1]...]\n", os.Args[0])
+		flag.PrintDefaults()
+	}
+
+	flag.Parse()
+
+	var out io.Writer
+
+	if *g_out == "" {
+		out = os.Stdout
+	} else {
+		fout, err := os.Create(*g_out)
+		if err != nil {
+			log.Fatal(err)
+		}
+		defer fout.Close()
+		out = fout
+	}
+
 	// Create a new zip archive.
-	w := zip.NewWriter(os.Stdout)
+	w := zip.NewWriter(out)
 
 	// Add some files to the archive.
 	files := make([]string, 0)
-	for _, path := range os.Args[1:] {
+	for _, path := range flag.Args() {
 		fi, err := os.Stat(path)
 		if err != nil {
 			log.Fatal(err)

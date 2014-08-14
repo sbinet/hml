@@ -75,11 +75,12 @@ my-team
 ### `zip` file generation
 
 A tool is available to generate a `zip` file according to the above
-rules.
- [testdata/mk-zip.go](https://github.com/sbinet/hml/blob/master/testdata/mk-zip.go)
+rules:
+ [hml-mk-zip](https://github.com/sbinet/hml/blob/master/hml-mk-zip/main.go)
 
 ```sh
-$ go run /path/to/mk-zip.go my-team >| my-team.zip
+$ go get github.com/sbinet/hml/hml-mk-zip
+$ hml-mk-zip /path/to/mk-zip.go my-team >| my-team.zip
 
 deflating: my-team/code-1/LICENSE
 deflating: my-team/code-1/README.md
