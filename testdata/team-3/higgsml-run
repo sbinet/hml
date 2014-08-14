@@ -7,7 +7,7 @@ in=$1
 trained=$2
 out=$3
 
-python2 higgsml-simplest.py $in $trained $out || exit 1
+python higgsml-simplest.py $in $trained $out || exit 1
 
 echo "::: higgs-ml [prediction]... [ok]"
 exit 0
