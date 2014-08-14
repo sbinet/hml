@@ -10,10 +10,8 @@ import sys
 # somewhat arbitrary value, should be optimised
 threshold = -22.0
 
-def printf(*args):
-    if len(args) > 1: line = args[0]+"\n" % args[1:]
-    else:             line = args[0]+"\n"
-    return sys.stdout.write(line)
+def printf(arg):
+    return sys.stdout.write(arg)
 
 # compute AMS
 def ams(s,b):
@@ -48,7 +46,7 @@ def run():
 
 
 def do_train(fname="training.csv", trained="trained.dat"):
-    printf("Reading in training file")
+    printf("Reading in training file\n")
     alltraining = list(csv.reader(open(fname), delimiter=','))
 
     # first line is the list of variables
@@ -64,7 +62,7 @@ def do_train(fname="training.csv", trained="trained.dat"):
     iid=headertraining.index("EventId")
     
     
-    printf("Loop on training dataset and compute the score")
+    printf("Loop on training dataset and compute the score\n")
 
     headertraining+=["myscore"]
     for entry in alltraining:
@@ -86,7 +84,7 @@ def do_train(fname="training.csv", trained="trained.dat"):
     # at this stage alltraining is a list (one entry per line) of list of variables
     # which can be conveniently accessed by getting the index from the header 
 
-    printf("Loop again to determine the AMS, using threshold:",threshold)
+    printf("Loop again to determine the AMS, using threshold: %s\n" % threshold)
     sumsig=0.
     sumbkg=0.
     iscore=headertraining.index("myscore")
@@ -105,19 +103,19 @@ def do_train(fname="training.csv", trained="trained.dat"):
         pass
     
     # ok now we have our signal (sumsig) and background (sumbkg) estimation
-    printf(" AMS computed from training file :",ams(sumsig,sumbkg),"( signal=",sumsig," bkg=",sumbkg,")")
+    printf(" AMS computed from training file : %s (signal=%s bkg=%s)\n" %(ams(sumsig,sumbkg), sumsig, sumbkg))
     # delete big objects
     del alltraining
     
 
 def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.csv"):
-    printf("Reading in test file")
+    printf("Reading in test file\n")
     alltest = list(csv.reader(open(fname), delimiter=','))
     headertest        = alltest[0]
     alltest=alltest[1:]
 
 
-    printf("Compute the score for the test file entries ")
+    printf("Compute the score for the test file entries\n")
 
     # recompute variable indices for safety 
     immc=headertest.index("DER_mass_MMC")
@@ -139,20 +137,20 @@ def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.
 
     iscore=headertest.index("myscore")
     if iscore<0:
-        printf("ERROR could not find variable myscore")
+        printf("ERROR could not find variable myscore\n")
         raise Exception # should not happen
 
-    printf("Sort on the score ") 
+    printf("Sort on the score\n")
     # in the first version of the file, an auxilliary map was used, but this was useless
     alltestsorted=sorted(alltest,key=lambda entry: entry[iscore])
     # the RankOrder we want is now simply the entry number
 
-    printf("Final loop to write the submission file %s", ofname)
+    printf("Final loop to write the submission file %s\n" % ofname)
     outputfile=open(ofname,"w")
     outputfile.write("EventId,RankOrder,Class\n")
     iid=headertest.index("EventId")
     if iid<0:
-        printf("ERROR could not find variable EventId in test file")
+        printf("ERROR could not find variable EventId in test file\n")
         raise Exception # should not happen
 
     rank=1 # kaggle wants to start at 1
@@ -170,7 +168,7 @@ def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.
         pass
 
     outputfile.close()
-    printf(" You can now submit %s to kaggle site", ofname)
+    printf(" You can now submit %s to kaggle site\n" % ofname)
 
     # delete big objects
     del alltest,alltestsorted
