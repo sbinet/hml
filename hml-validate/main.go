@@ -54,8 +54,8 @@ func main() {
 		trainfile = flag.Arg(2)
 	}
 
-	for i, file := range []*string{&testfile, &trainfile} {
-		printf("file[%d]=%q\n", i, *file)
+	for _, file := range []*string{&testfile, &trainfile} {
+		// printf("file[%d]=%q\n", i, *file)
 		if *file == "" {
 			continue
 		}
@@ -71,7 +71,7 @@ func main() {
 			flag.Usage()
 			os.Exit(1)
 		}
-		printf("file[%d]=%q\n", i, *file)
+		// printf("file[%d]=%q\n", i, *file)
 	}
 
 	rc := run()
