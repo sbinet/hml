@@ -90,29 +90,34 @@ options:
 }
 
 func run() int {
-	fname := flag.Arg(0)
-	printf("Archive: %s\n", fname)
 
-	r, err := zip.OpenReader(fname)
-	if err != nil {
-		printf("**error** %v\n", err)
-		return 1
-	}
-	defer r.Close()
-
-	// printf("comment: %q\n", r.Comment)
-
-	tmpdir, err := ioutil.TempDir("", "higgsml-validate-")
+	dir, err := ioutil.TempDir("", "higgsml-validate-")
 	if err != nil {
 		printf("**error** creating tmpdir: %v\n", err)
 		return 1
 	}
-	defer os.RemoveAll(tmpdir)
+	defer os.RemoveAll(dir)
 
-	err = unzip(tmpdir, r)
+	fname := flag.Arg(0)
+
+	fi, err := os.Lstat(fname)
 	if err != nil {
-		printf("**error** unzipping [%s] under [%s]: %v\n", fname, tmpdir, err)
+		printf("**error** stat-ing [%s]: %v\n", fname, err)
 		return 1
+	}
+
+	if fi.IsDir() {
+		err = process_dir(dir, fname)
+		if err != nil {
+			printf("**error** processing directory [%s]: %v\n", fname, err)
+			return 1
+		}
+	} else {
+		err = process_archive(dir, fname)
+		if err != nil {
+			printf("**error** processing archive [%s]: %v\n", fname, err)
+			return 1
+		}
 	}
 
 	v, err := NewValidator(dir, *g_train)
@@ -129,6 +134,31 @@ func run() int {
 	}
 
 	return 0
+}
+
+func process_dir(outdir, indir string) error {
+	return copytree(filepath.Join(outdir, filepath.Base(indir)), indir)
+}
+
+func process_archive(dir, fname string) error {
+	var err error
+	printf("Archive: %s\n", fname)
+
+	r, err := zip.OpenReader(fname)
+	if err != nil {
+		printf("**error** %v\n", err)
+		return err
+	}
+	defer r.Close()
+
+	// printf("comment: %q\n", r.Comment)
+
+	err = unzip(dir, r)
+	if err != nil {
+		printf("**error** unzipping [%s] under [%s]: %v\n", fname, dir, err)
+		return err
+	}
+	return err
 }
 
 func unzip(tmpdir string, r *zip.ReadCloser) error {
