@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type Event struct {
+type Row struct {
 	SubmissionID     int       `hml:"SubmissionId"`
 	DateSubmittedUTC time.Time `hml:"DateSubmittedUtc"`
 	TeamID           int       `hml:"TeamId"`

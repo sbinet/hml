@@ -37,11 +37,11 @@ func main() {
 		r = f
 	}
 
-	rows := make([]Event, 0, 1024)
+	rows := make([]Row, 0, 1024)
 	dec := NewDecoder(r)
 	for {
 		i := len(rows)
-		rows = append(rows, Event{})
+		rows = append(rows, Row{})
 		err = dec.Decode(&rows[i])
 		if err != nil {
 			rows = rows[:i]
