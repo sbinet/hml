@@ -6,7 +6,7 @@ echo "::: args:" $@
 in=$1
 out=$2
 
-python2 higgsml_simplest_v2.py --train $in $out || exit 1
+python higgsml-simplest.py --train $in $out || exit 1
 
 echo "::: higgs-ml [training]... [ok]"
 exit 0
