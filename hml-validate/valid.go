@@ -9,14 +9,14 @@ import (
 	"time"
 )
 
-type Validate struct {
+type Validator struct {
 	root string // work dir
 	code []Code // list of submissions
 }
 
-func NewValidate(dir string, train bool) (Validate, error) {
+func NewValidator(dir string, train bool) (Validator, error) {
 	var err error
-	v := Validate{
+	v := Validator{
 		root: dir,
 		code: make([]Code, 0, 2),
 	}
@@ -57,7 +57,7 @@ func NewValidate(dir string, train bool) (Validate, error) {
 	return v, err
 }
 
-func (v Validate) Run() error {
+func (v Validator) Run() error {
 	var err error
 
 	for i, code := range v.code {

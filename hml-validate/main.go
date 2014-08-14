@@ -104,7 +104,7 @@ func run() int {
 		return 1
 	}
 
-	v, err := NewValidate(tmpdir, *g_train)
+	v, err := NewValidator(dir, *g_train)
 	if err != nil {
 		printf("**error** validating: %v\n", err)
 		return 1
