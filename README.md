@@ -82,6 +82,10 @@ my-team
     `-- higgsml-train
 ```
 
+Environment configuration, if needed, should be performed in the
+`higgsml-xyz` scripts (*e.g.* setting up `$PYTHONPATH` or
+`$LD_LIBRARY_PATH` environment variables.)
+
 ### `zip` file generation
 
 A tool is available to generate a `zip` file according to the above
