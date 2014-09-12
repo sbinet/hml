@@ -16,6 +16,7 @@ func main() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
 		fmt.Fprintf(os.Stderr, " %s out.zip file1 [file2 [dir1]...]\n", os.Args[0])
 		flag.PrintDefaults()
+		fmt.Fprintf(os.Stderr, "\nNeed more help ?\n => https://www.kaggle.com/c/higgs-boson/forums\n")
 	}
 
 	flag.Parse()

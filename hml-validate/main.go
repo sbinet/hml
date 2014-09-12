@@ -42,6 +42,8 @@ options:
 `,
 		)
 		flag.PrintDefaults()
+
+		fmt.Fprintf(os.Stderr, "\nNeed more help ?\n => https://www.kaggle.com/c/higgs-boson/forums\n")
 	}
 
 	flag.Parse()
