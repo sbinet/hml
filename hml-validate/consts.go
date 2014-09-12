@@ -1,9 +1,21 @@
 package main
 
-const (
-	buildscript = "higgsml-build" + binExe
-	runscript   = "higgsml-run" + binExe
-	trainscript = "higgsml-train" + binExe
-	trainedname = "trained.dat"
-	csv_results = "submission.csv"
+var (
+	Def = struct {
+		BuildScript string
+		RunScript   string
+		TrainScript string
+		TrainedName string
+		Results     string
+
+		WorkDir string
+	}{
+		BuildScript: "higgsml-build" + binExe,
+		RunScript:   "higgsml-run" + binExe,
+		TrainScript: "higgsml-train" + binExe,
+		TrainedName: "trained.dat",
+		Results:     "submission.csv",
+
+		WorkDir: ".higgsml-work",
+	}
 )
