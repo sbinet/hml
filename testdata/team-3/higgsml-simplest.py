@@ -103,10 +103,13 @@ def do_train(fname="training.csv", trained="trained.dat"):
         pass
     
     # ok now we have our signal (sumsig) and background (sumbkg) estimation
-    printf(" AMS computed from training file : %s (signal=%s bkg=%s)\n" %(ams(sumsig,sumbkg), sumsig, sumbkg))
+    ams_value = ams(sumsig,sumbkg)
+    printf(" AMS computed from training file : %s (signal=%s bkg=%s)\n" %(ams_value, sumsig, sumbkg))
     # delete big objects
     del alltraining
-    
+
+    otrain = open(trained, "w+")
+    otrain.write("cut-off=%s\nams=%s\n" % (threshold, ams_value))
 
 def run_prediction(fname="test.csv", trained="trained.dat", ofname="scores_test.csv"):
     printf("Reading in test file\n")
