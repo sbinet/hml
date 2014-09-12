@@ -28,7 +28,7 @@ func main() {
 where:
   - test.csv is a test file (taken from $PWD if not given.)
   - training.csv is a training file (taken from $PWD if not given.)
-    training.csv is needed iif -train is enabled.
+    training.csv is needed iff -train is enabled.
 
 ex:
  $ hml-validate my-team
