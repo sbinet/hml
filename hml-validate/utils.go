@@ -68,3 +68,34 @@ func copytree(dstdir, srcdir string) error {
 	})
 	return err
 }
+
+func copyfile(dstname, srcname string) error {
+	src, err := os.Open(srcname)
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	fi, err := src.Stat()
+	if err != nil {
+		return err
+	}
+
+	dst, err := os.OpenFile(dstname, os.O_CREATE|os.O_WRONLY, fi.Mode())
+	if err != nil {
+		return err
+	}
+	defer dst.Close()
+
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
+
+	err = dst.Close()
+	if err != nil {
+		return err
+	}
+
+	return err
+}
