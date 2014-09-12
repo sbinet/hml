@@ -86,6 +86,7 @@ func (v Validator) Run() error {
 type Code struct {
 	Root    string // directory containing sources/binaries
 	Name    string // name of this code submission (e.g. team/code)
+	Build   string // path to code-building executable
 	Train   string // path to training executable
 	Pred    string // path to prediction executable
 	Trained string // path to trained data parameters
@@ -116,36 +117,62 @@ func NewCode(dir string, train bool) (Code, error) {
 
 	exes := make([]string, 0)
 	// find executables
-	err = filepath.Walk(dir, func(path string, fi os.FileInfo, err error) error {
-		if fi.IsDir() {
-			return nil
-		}
-		if strings.Contains(strings.ToLower(path), "readme") {
-			code.Readme = path
-		}
+	find_execs := func() error {
+		return filepath.Walk(dir, func(path string, fi os.FileInfo, err error) error {
+			if fi.IsDir() {
+				return nil
+			}
+			if strings.Contains(strings.ToLower(path), "readme") {
+				code.Readme = path
+			}
 
-		if strings.Contains(strings.ToLower(path), "license") {
-			code.License = path
-		}
+			if strings.Contains(strings.ToLower(path), "license") {
+				code.License = path
+			}
 
-		if strings.Contains(strings.ToLower(path), Def.TrainedName) {
-			code.Trained = path
-		}
+			if strings.Contains(strings.ToLower(path), Def.TrainedName) {
+				code.Trained = path
+			}
 
-		// FIXME: better way ?
-		if !strings.Contains(fi.Mode().String(), "x") {
-			return nil
+			// FIXME: better way ?
+			if !strings.Contains(fi.Mode().String(), "x") {
+				return nil
+			}
+			exes = append(exes, path)
+			// printf(">>> %s\n", path)
+			if strings.HasSuffix(strings.ToLower(path), Def.TrainScript) {
+				code.Train = path
+			}
+			if strings.HasSuffix(strings.ToLower(path), Def.RunScript) {
+				code.Pred = path
+			}
+			if strings.HasSuffix(strings.ToLower(path), Def.BuildScript) {
+				code.Build = path
+			}
+			return err
+		})
+	}
+
+	err = find_execs()
+	if err != nil {
+		return code, err
+	}
+
+	// whether we need to build the code first.
+	if code.Build != "" {
+		err = code.build(dir)
+		if err != nil {
+			return code, err
 		}
-		exes = append(exes, path)
-		// printf(">>> %s\n", path)
-		if strings.HasSuffix(strings.ToLower(path), Def.TrainScript) {
-			code.Train = path
+		printf("\n")
+
+		// presumably, train-script and run-script need to be re-discovered...
+		exes = exes[:0]
+		err = find_execs()
+		if err != nil {
+			return code, err
 		}
-		if strings.HasSuffix(strings.ToLower(path), Def.RunScript) {
-			code.Pred = path
-		}
-		return err
-	})
+	}
 
 	if len(exes) <= 0 {
 		return code, fmt.Errorf("hml: could not find any suitable executable in zip-file")
@@ -199,6 +226,46 @@ func (code Code) run(outdir string) error {
 		return err
 	}
 
+	return err
+}
+
+func (code Code) build(dir string) error {
+	var err error
+	errch := make(chan error)
+
+	printf("::: building code...\n")
+
+	cmd := exec.Command(code.Build)
+	cmd.Stderr = os.Stderr
+	cmd.Stdout = os.Stdout
+	cmd.Stdin = os.Stdin
+	cmd.Dir = code.Root
+
+	start := time.Now()
+	go func() {
+		err = cmd.Start()
+		if err != nil {
+			errch <- err
+			return
+		}
+		errch <- cmd.Wait()
+	}()
+
+	duration := 1 * time.Hour
+	select {
+	case <-time.After(duration):
+		cmd.Process.Kill()
+		return fmt.Errorf("hml: building code timed out (%v)\n", duration)
+	case err = <-errch:
+		break
+	}
+
+	if err != nil {
+		printf("::: building code... [ERR] (delta=%v)\n", time.Since(start))
+		return err
+	}
+
+	printf("::: building code... [ok] (delta=%v)\n", time.Since(start))
 	return err
 }
 
