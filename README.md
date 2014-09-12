@@ -187,8 +187,8 @@ $ hml-validate my-team.zip
 ::: higgsml-validate...
 Archive: my-team.zip
   inflating: my-team/README.md
-  inflating: my-team/higgsml-pred
-  inflating: my-team/higgsml-training
+  inflating: my-team/higgsml-run
+  inflating: my-team/higgsml-train
 
 ::: run prediction...
 ::: higgs-ml [prediction]...
