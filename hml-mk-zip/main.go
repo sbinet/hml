@@ -10,39 +10,35 @@ import (
 	"path/filepath"
 )
 
-var (
-	g_out = flag.String("o", "", "path to output zip file (STDOUT if empty)")
-)
-
 func main() {
 
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, "Usage of %s:\n", os.Args[0])
-		fmt.Fprintf(os.Stderr, " %s -o out.zip file1 [file2 [dir1]...]\n", os.Args[0])
+		fmt.Fprintf(os.Stderr, " %s out.zip file1 [file2 [dir1]...]\n", os.Args[0])
 		flag.PrintDefaults()
 	}
 
 	flag.Parse()
 
-	var out io.Writer
-
-	if *g_out == "" {
-		out = os.Stdout
-	} else {
-		fout, err := os.Create(*g_out)
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer fout.Close()
-		out = fout
+	if flag.NArg() < 2 {
+		fmt.Fprintf(os.Stderr, "**error** %s needs at least 2 arguments.\n", os.Args[0])
+		flag.Usage()
+		os.Exit(1)
 	}
+
+	out, err := os.Create(flag.Arg(0))
+	if err != nil {
+		log.Fatalf("could not create file [%s]: %v\n", flag.Arg(0), err)
+	}
+	defer out.Close()
 
 	// Create a new zip archive.
 	w := zip.NewWriter(out)
 
 	// Add some files to the archive.
 	files := make([]string, 0)
-	for _, path := range flag.Args() {
+	for _, path := range flag.Args()[1:] {
+
 		fi, err := os.Stat(path)
 		if err != nil {
 			log.Fatal(err)
@@ -97,7 +93,7 @@ func main() {
 	}
 
 	// Make sure to check the error on Close.
-	err := w.Close()
+	err = w.Close()
 	if err != nil {
 		log.Fatal(err)
 	}
