@@ -104,6 +104,10 @@ A tool is available to generate a `zip` file according to the above
 rules:
  [hml-mk-zip](https://github.com/sbinet/hml/blob/master/hml-mk-zip/main.go)
 
+- First, install the (latest) `Go` toolchain from [golang.org](http://golang.org/doc/install.html)
+
+- Install `hml-mk-zip` from sources:
+
 ```sh
 $ go get github.com/sbinet/hml/hml-mk-zip
 $ hml-mk-zip my-team.zip my-team
@@ -180,6 +184,10 @@ If you have any question, feel free to ask on:
 https://www.kaggle.com/c/higgs-boson/forums
 
 ### Install `hml-validate`
+
+- First, install the (latest) `Go` toolchain from [golang.org](http://golang.org/doc/install.html)
+
+- Install `hml-validate` from sources:
 
 ```sh
 $ go get github.com/sbinet/hml/hml-validate
