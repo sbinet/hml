@@ -176,6 +176,9 @@ When everything is successful, it will collect the results (the
 `submission.csv` for each code) under a new `higgsml-output`
 directory.
 
+If you have any question, feel free to ask on:
+https://www.kaggle.com/c/higgs-boson/forums
+
 ### Install `hml-validate`
 
 ```sh
