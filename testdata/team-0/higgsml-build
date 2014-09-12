@@ -1,0 +1,10 @@
+#!/bin/sh
+
+echo "::: higgs-ml [build code]..."
+echo "::: args:" $@
+
+/bin/cp -f higgsml-run.tmp higgsml-run
+/bin/cp -f higgsml-train.tmp higgsml-train
+
+echo "::: higgs-ml [build code]... [ok]"
+exit 0
