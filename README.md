@@ -94,7 +94,7 @@ rules:
 
 ```sh
 $ go get github.com/sbinet/hml/hml-mk-zip
-$ hml-mk-zip my-team >| my-team.zip
+$ hml-mk-zip my-team.zip my-team
 
 deflating: my-team/code-1/LICENSE
 deflating: my-team/code-1/README.md
