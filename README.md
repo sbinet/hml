@@ -169,6 +169,8 @@ $ higgsml-run test.csv trained.dat submission.csv
 
 to create the `submission.csv` file from the test sample and the
 training parameters.
+This `submission.csv` file **SHALL** be the same than the one you have
+submitted during the contest.
 
 When everything is successful, it will collect the results (the
 `submission.csv` for each code) under a new `higgsml-output`
