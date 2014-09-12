@@ -10,5 +10,8 @@ out=$3
 echo ">>> input:  ${in}"
 echo ">>> output: ${out}"
 
+[ -a "$in" ] || exit 1
+touch ${out}
+
 echo "::: higgs-ml [prediction]... [ok]"
 exit 0
