@@ -15,7 +15,7 @@ Tools to validate `Higgs-ML` challenge submissions.
 
 ## Layout of a `zip` submission file
 
-`zip` submission files **SHALL** have the following structure:
+`zip` submission files **MUST** have the following structure:
 
 ```
 Archive:  ./my-team.zip
@@ -91,7 +91,7 @@ Environment configuration, if needed, should be performed in the
 `$LD_LIBRARY_PATH` environment variables.)
 
 If you ship the sources (and not just a binary) the directory
-**SHALL** contain a file `higgsml-build` (or `higgsml-build.bat` on
+**MUST** contain a file `higgsml-build` (or `higgsml-build.bat` on
 `Windows (TM)`) which can be called with no argument, and will run the
 build procedure in-place (*i.e.* not out of tree) so the `higgsml-run`
 and `higgsml-train` can find all the necessary assets at runtime.
@@ -149,7 +149,7 @@ If the `zip` submission file contains a `higgsml-build` script, it
 will be run prior to anything else, to generate the needed binaries
 and assets.
 
-`higgsml-build` **SHALL** be called with no argument.
+`higgsml-build` **MUST** be called with no argument.
 
 
 `hml-validate` will then run (when instructed to do so by the `-train`
@@ -169,7 +169,7 @@ $ higgsml-run test.csv trained.dat submission.csv
 
 to create the `submission.csv` file from the test sample and the
 training parameters.
-This `submission.csv` file **SHALL** be the same than the one you have
+This `submission.csv` file **MUST** be the same than the one you have
 submitted during the contest.
 
 When everything is successful, it will collect the results (the
