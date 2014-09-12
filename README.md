@@ -106,7 +106,7 @@ rules:
 
 - First, install the (latest) `Go` toolchain from [golang.org](http://golang.org/doc/install.html)
 
-- Install `hml-mk-zip` from sources:
+- Then, install `hml-mk-zip` from sources:
 
 ```sh
 $ go get github.com/sbinet/hml/hml-mk-zip
@@ -187,7 +187,7 @@ https://www.kaggle.com/c/higgs-boson/forums
 
 - First, install the (latest) `Go` toolchain from [golang.org](http://golang.org/doc/install.html)
 
-- Install `hml-validate` from sources:
+- Then, install `hml-validate` from sources:
 
 ```sh
 $ go get github.com/sbinet/hml/hml-validate
