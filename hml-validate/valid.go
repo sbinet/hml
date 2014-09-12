@@ -70,7 +70,7 @@ func (v Validator) Run() error {
 	for i, code := range v.code {
 		start := time.Now()
 		printf("\n=== code submission #%d/%d (%s)...\n", i+1, len(v.code), code.Name)
-		err = code.run()
+		err = code.run(outdir)
 		if err != nil {
 			return err
 		}
@@ -78,23 +78,6 @@ func (v Validator) Run() error {
 			i+1, len(v.code), code.Name,
 			time.Since(start),
 		)
-
-		// collect result
-		srcdir := pdir(code.Root, Def.WorkDir)
-		dstdir := pdir(outdir, code.Name)
-
-		err = os.MkdirAll(dstdir, 0755)
-		if err != nil {
-			return err
-		}
-
-		srcname := pdir(srcdir, Def.Results)
-		dstname := pdir(dstdir, Def.Results)
-
-		err = copyfile(dstname, srcname)
-		if err != nil {
-			return err
-		}
 	}
 
 	return err
@@ -189,7 +172,7 @@ func NewCode(dir string, train bool) (Code, error) {
 	return code, err
 }
 
-func (code Code) run() error {
+func (code Code) run(outdir string) error {
 	var err error
 
 	dir := filepath.Join(code.Root, Def.WorkDir)
@@ -207,6 +190,11 @@ func (code Code) run() error {
 	}
 
 	err = code.run_pred(dir)
+	if err != nil {
+		return err
+	}
+
+	err = code.collect(outdir)
 	if err != nil {
 		return err
 	}
@@ -312,6 +300,29 @@ func (code Code) run_pred(dir string) error {
 	}
 
 	printf("::: run prediction... [ok] (delta=%v)\n", time.Since(start))
+	return err
+}
+
+func (code Code) collect(outdir string) error {
+	var err error
+
+	// collect result
+	srcdir := pdir(code.Root, Def.WorkDir)
+	dstdir := pdir(outdir, code.Name)
+
+	err = os.MkdirAll(dstdir, 0755)
+	if err != nil {
+		return err
+	}
+
+	srcname := pdir(srcdir, Def.Results)
+	dstname := pdir(dstdir, Def.Results)
+
+	err = copyfile(dstname, srcname)
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
