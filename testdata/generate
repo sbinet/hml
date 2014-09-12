@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo "::: generate team-0..."
+hml-mk-zip higgsml-test-team0.zip team-0
+
 echo "::: generate team-1..."
 hml-mk-zip higgsml-test-team1.zip team-1
 
