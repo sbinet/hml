@@ -27,7 +27,7 @@ func NewValidator(dir string, train bool) (Validator, error) {
 		if fi.IsDir() {
 			return nil
 		}
-		if strings.Contains(strings.ToLower(path), runscript) {
+		if strings.Contains(strings.ToLower(path), Def.RunScript) {
 			exes = append(exes, path)
 		}
 		return err
@@ -98,7 +98,7 @@ func NewCode(dir string, train bool) (Code, error) {
 	code := Code{
 		Root:       dir,
 		Name:       filepath.Base(dir),
-		Trained:    trainedname,
+		Trained:    Def.TrainedName,
 		DoTraining: train,
 		trainfile:  trainfile,
 		testfile:   testfile,
@@ -121,7 +121,7 @@ func NewCode(dir string, train bool) (Code, error) {
 			code.License = path
 		}
 
-		if strings.Contains(strings.ToLower(path), trainedname) {
+		if strings.Contains(strings.ToLower(path), Def.TrainedName) {
 			code.Trained = path
 		}
 
@@ -131,10 +131,10 @@ func NewCode(dir string, train bool) (Code, error) {
 		}
 		exes = append(exes, path)
 		// printf(">>> %s\n", path)
-		if strings.HasSuffix(strings.ToLower(path), trainscript) {
+		if strings.HasSuffix(strings.ToLower(path), Def.TrainScript) {
 			code.Train = path
 		}
-		if strings.HasSuffix(strings.ToLower(path), runscript) {
+		if strings.HasSuffix(strings.ToLower(path), Def.RunScript) {
 			code.Pred = path
 		}
 		return err
@@ -168,7 +168,7 @@ func NewCode(dir string, train bool) (Code, error) {
 func (code Code) run() error {
 	var err error
 
-	dir := filepath.Join(code.Root, ".higgsml-work")
+	dir := filepath.Join(code.Root, Def.WorkDir)
 	err = os.MkdirAll(dir, 0755)
 	if err != nil {
 		return err
@@ -196,7 +196,7 @@ func (code Code) run_training(dir string) error {
 
 	printf("::: run training...\n")
 
-	trained := pdir(dir, trainedname)
+	trained := pdir(dir, Def.TrainedName)
 
 	cmd := exec.Command(code.Train, code.trainfile, trained)
 	cmd.Stderr = os.Stderr
@@ -247,10 +247,10 @@ func (code Code) run_pred(dir string) error {
 	trained := code.Trained
 	if code.DoTraining {
 		// if we ran the training, then use that file instead.
-		trained = pdir(dir, trainedname)
+		trained = pdir(dir, Def.TrainedName)
 	}
 
-	results := pdir(dir, csv_results)
+	results := pdir(dir, Def.Results)
 	cmd := exec.Command(code.Pred, code.testfile, trained, results)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
