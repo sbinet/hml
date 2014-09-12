@@ -60,6 +60,13 @@ func NewValidator(dir string, train bool) (Validator, error) {
 func (v Validator) Run() error {
 	var err error
 
+	// create output dir to collect results
+	outdir := "higgsml-output"
+	err = os.MkdirAll(outdir, 0755)
+	if err != nil {
+		return err
+	}
+
 	for i, code := range v.code {
 		start := time.Now()
 		printf("\n=== code submission #%d/%d (%s)...\n", i+1, len(v.code), code.Name)
@@ -71,6 +78,23 @@ func (v Validator) Run() error {
 			i+1, len(v.code), code.Name,
 			time.Since(start),
 		)
+
+		// collect result
+		srcdir := pdir(code.Root, Def.WorkDir)
+		dstdir := pdir(outdir, code.Name)
+
+		err = os.MkdirAll(dstdir, 0755)
+		if err != nil {
+			return err
+		}
+
+		srcname := pdir(srcdir, Def.Results)
+		dstname := pdir(dstdir, Def.Results)
+
+		err = copyfile(dstname, srcname)
+		if err != nil {
+			return err
+		}
 	}
 
 	return err
