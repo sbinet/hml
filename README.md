@@ -194,12 +194,12 @@ Archive: my-team.zip
 
 ::: run prediction...
 ::: higgs-ml [prediction]...
-::: args: test.csv trained.dat scores_test.csv
+::: args: test.csv trained.dat submission.csv
 ::: compute the score for the test file entries [test.csv]
 ::: loop again on test file to load BDT score pairs
 ::: sort on the score
 ::: build a map key=id, value=rank
-::: you can now submit [scores_test.csv] to Kaggle website
+::: you can now submit [submission.csv] to Kaggle website
 ::: timing: 15.862965585s
 ::: bye.
 ::: higgs-ml [prediction]... [ok]
