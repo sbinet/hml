@@ -98,7 +98,7 @@ func NewCode(dir string, train bool) (Code, error) {
 	code := Code{
 		Root:       dir,
 		Name:       filepath.Base(dir),
-		Trained:    "trained.dat",
+		Trained:    trainedname,
 		DoTraining: train,
 		trainfile:  trainfile,
 		testfile:   testfile,
@@ -121,7 +121,7 @@ func NewCode(dir string, train bool) (Code, error) {
 			code.License = path
 		}
 
-		if strings.Contains(strings.ToLower(path), "trained.dat") {
+		if strings.Contains(strings.ToLower(path), trainedname) {
 			code.Trained = path
 		}
 
@@ -196,7 +196,9 @@ func (code Code) run_training(dir string) error {
 
 	printf("::: run training...\n")
 
-	cmd := exec.Command(code.Train, code.trainfile, pdir(dir, "trained.dat"))
+	trained := pdir(dir, trainedname)
+
+	cmd := exec.Command(code.Train, code.trainfile, trained)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
@@ -239,10 +241,11 @@ func (code Code) run_pred(dir string) error {
 	trained := code.Trained
 	if code.DoTraining {
 		// if we ran the training, then use that file instead.
-		trained = pdir(dir, "trained.dat")
+		trained = pdir(dir, trainedname)
 	}
 
-	cmd := exec.Command(code.Pred, code.testfile, trained, pdir(dir, "scores_test.csv"))
+	results := pdir(dir, csv_results)
+	cmd := exec.Command(code.Pred, code.testfile, trained, results)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
 	cmd.Stdin = os.Stdin
