@@ -21,6 +21,7 @@ Tools to validate `Higgs-ML` challenge submissions.
 Archive:  ./my-team.zip
  extracting: my-team/LICENSE
  extracting: my-team/README
+ extracting: my-team/higgsml-build
  extracting: my-team/higgsml-run
  extracting: my-team/higgsml-train
  extracting: my-team/extra/stuff
@@ -32,13 +33,16 @@ ie: created from:
 my-team
 |-- LICENSE
 |-- README
+|-- higgsml-build    (optional)
 |-- higgsml-run
 |-- higgsml-train
-`-- extra
-    `-- stuff
+`-- extra            (optional)
+    `-- stuff        (optional)
 ```
 
 where:
+- `higgsml-build` (with that exact spelling) is the executable script
+  (or binary) which builds the code from sources (OPTIONAL)
 - `higgsml-run` (with that exact spelling) is the executable script
   (or binary) which runs the prediction
 - `higgsml-train` (with that exact spelling) is the executable script
@@ -47,8 +51,8 @@ where:
 - `README` (or `README.md` or `README.txt`) contains some
   documentation about the code.
 
-(on `Windows (TM)`, the scripts should be called `higgsml-run.bat` and
-`higgsml-train.bat`)
+(on `Windows (TM)`, the scripts should be called `higgsml-build.bat`,
+`higgsml-run.bat` and `higgsml-train.bat`)
 
 In case you submit 2 codes, each code should have its own directory
 structure. *e.g.:*
@@ -85,6 +89,14 @@ my-team
 Environment configuration, if needed, should be performed in the
 `higgsml-xyz` scripts (*e.g.* setting up `$PYTHONPATH` or
 `$LD_LIBRARY_PATH` environment variables.)
+
+If you ship the sources (and not just a binary) the directory
+**SHALL** contain a file `higgsml-build` (or `higgsml-build.bat` on
+`Windows (TM)`) which can be called with no argument, and will run the
+build procedure in-place (*i.e.* not out of tree) so the `higgsml-run`
+and `higgsml-train` can find all the necessary assets at runtime.
+The `higgsml-build` script should not try to fetch additional sources
+from outside the code directory (*i.e.* no outbound connection allowed.)
 
 ### `zip` file generation
 
