@@ -108,6 +108,24 @@ deflating: my-team/code-2/higgsml-train
 deflating: my-team/code-2/higgsml_simplest_v2.py
 ```
 
+### Example
+
+`github.com/sbinet/hml` has a couple of testcases (with `python` and
+`go` programs).
+Let's try to make a proper `zip` file:
+
+```sh
+$ cd /somewhere
+$ git clone git://github.com/sbinet/hml
+$ cd hml/testdata
+$ hml-mk-zip team-3.zip team-3
+2014/09/12 09:33:22 deflating: team-3/LICENSE
+2014/09/12 09:33:22 deflating: team-3/README.md
+2014/09/12 09:33:22 deflating: team-3/higgsml-run
+2014/09/12 09:33:22 deflating: team-3/higgsml-simplest.py
+2014/09/12 09:33:22 deflating: team-3/higgsml-train
+```
+
 ## `hml-validate`
 
 `hml-validate` is a tool to validate the content of a `zip` submission
