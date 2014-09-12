@@ -10,16 +10,29 @@ build:
 	@go build $(GOFLAGS) ./...
 
 install:
+	@go get github.com/sbinet/go-higgsml
 	@go get $(GOFLAGS) ./...
 
 gen:
 	(cd testdata && ./generate)
 
-test-all: install gen
+test-all: clean install gen
+	@go get github.com/sbinet/go-higgsml
 	@go test $(GOFLAGS) ./...
+
 	@echo ""
 	@echo ""
-	@echo "=== team-1 ==="
+	@echo "=== team-0 === (train)"
+	@hml-validate -train testdata/higgsml-test-team0.zip
+
+	@echo ""
+	@echo ""
+	@echo "=== team-0 ==="
+	@hml-validate testdata/higgsml-test-team0.zip
+
+	@echo ""
+	@echo ""
+	@echo "=== team-1 === (train)"
 	@hml-validate -train testdata/higgsml-test-team1.zip
 
 	@echo ""
@@ -29,7 +42,7 @@ test-all: install gen
 
 	@echo ""
 	@echo ""
-	@echo "=== team-2 ==="
+	@echo "=== team-2 === (train)"
 	@hml-validate -train testdata/higgsml-test-team2.zip
 
 	@echo ""
@@ -39,7 +52,7 @@ test-all: install gen
 
 	@echo ""
 	@echo ""
-	@echo "=== team-3 ==="
+	@echo "=== team-3 === (train)"
 	@hml-validate -train testdata/higgsml-test-team3.zip
 
 	@echo ""
@@ -49,7 +62,7 @@ test-all: install gen
 
 	@echo ""
 	@echo ""
-	@echo "=== team-4 ==="
+	@echo "=== team-4 === (train)"
 	@hml-validate -train testdata/higgsml-test-team4.zip
 
 	@echo ""
@@ -57,8 +70,14 @@ test-all: install gen
 	@echo "=== team-4 ==="
 	@hml-validate testdata/higgsml-test-team4.zip
 
-test: install gen
+test: clean install gen
+	@go get github.com/sbinet/go-higgsml
 	@go test $(GOFLAGS) ./...
+
+	@echo ""
+	@echo ""
+	@echo "=== team-0 ==="
+	@hml-validate testdata/higgsml-test-team0.zip
 
 	@echo ""
 	@echo ""
@@ -72,5 +91,6 @@ test: install gen
 
 clean:
 	@go clean $(GOFLAGS) -i ./...
+	@rm -rf higgsml-output
 
 ## EOF
