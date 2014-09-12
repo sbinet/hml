@@ -143,6 +143,37 @@ $ hml-mk-zip team-3.zip team-3
 `hml-validate` is a tool to validate the content of a `zip` submission
 file, to make sure that `zip` file will be usable by `HEP` physicists.
 
+`hml-validate` will run off a `zip` submission file.
+
+If the `zip` submission file contains a `higgsml-build` script, it
+will be run prior to anything else, to generate the needed binaries
+and assets.
+
+`higgsml-build` **SHALL** be called with no argument.
+
+
+`hml-validate` will then run (when instructed to do so by the `-train`
+switch from the command line):
+ 
+ ```sh
+$ higgsml-train training.csv trained.dat
+ ```
+
+to create a `trained.dat` file from the `training.csv` sample.
+
+Finally, `hml-validate` will run:
+
+```sh
+$ higgsml-run test.csv trained.dat submission.csv
+```
+
+to create the `submission.csv` file from the test sample and the
+training parameters.
+
+When everything is successful, it will collect the results (the
+`submission.csv` for each code) under a new `higgsml-output`
+directory.
+
 ### Install `hml-validate`
 
 ```sh
