@@ -208,10 +208,26 @@ Archive: my-team.zip
 
 ```sh
 $ hml-validate -help
-::: higgsml-validate...
-Usage of hml-validate:
- hml-validate zipfile [test.csv [training.csv]]
-  -train=false: run the training
+Usage: hml-validate zipfile-or-directory [test.csv [training.csv]]
+
+where:
+  - test.csv is a test file (taken from $PWD if not given.)
+  - training.csv is a training file (taken from $PWD if not given.)
+    training.csv is needed iff -train is enabled.
+
+ex:
+ $ hml-validate my-team
+ $ hml-validate my-team/
+ $ hml-validate my-team.zip
+ $ hml-validate my-team.tar.gz
+ $ hml-validate my-team /path/to/test.csv
+ $ hml-validate my-team /path/to/test.csv /path/to/training.csv
+
+options:
+  -train=false: switch to run the training during validation
+
+Need more help ?
+ => https://www.kaggle.com/c/higgs-boson/forums
 ```
 
 ### Example
