@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	g_train = flag.Bool("train", false, "run the training")
+	g_train = flag.Bool("train", false, "switch to run the training during validation")
 
 	trainfile = "training.csv"
 	testfile  = "test.csv"
