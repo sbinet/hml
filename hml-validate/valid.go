@@ -228,6 +228,12 @@ func (code Code) run_training(dir string) error {
 		return err
 	}
 
+	_, err = os.Stat(trained)
+	if err != nil {
+		printf("::: run training... [ERR] (delta=%v)\n", time.Since(start))
+		return err
+	}
+
 	printf("::: run training... [ok] (delta=%v)\n", time.Since(start))
 	return err
 }
@@ -270,6 +276,12 @@ func (code Code) run_pred(dir string) error {
 		break
 	}
 
+	if err != nil {
+		printf("::: run prediction... [ERR] (delta=%v)\n", time.Since(start))
+		return err
+	}
+
+	_, err = os.Stat(results)
 	if err != nil {
 		printf("::: run prediction... [ERR] (delta=%v)\n", time.Since(start))
 		return err
