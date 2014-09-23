@@ -189,13 +189,8 @@ func unzip(tmpdir string, r *zip.ReadCloser) error {
 			printf("**error** creating output file [%s]: %v\n", ofname, err)
 			return err
 		}
-		defer func(w *os.File) {
-			err = w.Close()
-			if err != nil {
-				printf("**error** closing output file [%s]: %v\n", ofname, err)
-				os.Exit(1)
-			}
-		}(w)
+		defer w.Close()
+
 		_, err = io.Copy(w, rc)
 		if err != nil {
 			printf("**error** copying to [%s]: %v\n", ofname, err)
@@ -205,6 +200,18 @@ func unzip(tmpdir string, r *zip.ReadCloser) error {
 		err = w.Chmod(f.Mode())
 		if err != nil {
 			printf("**error** setting chmod [%v] for file [%s]: %v\n", f.Mode(), ofname, err)
+			return err
+		}
+
+		err = rc.Close()
+		if err != nil {
+			printf("**error** closing input file [%s]: %v\n", f.Name, err)
+			return err
+		}
+
+		err = w.Close()
+		if err != nil {
+			printf("**error** closing output file [%s]: %v\n", ofname, err)
 			return err
 		}
 	}
