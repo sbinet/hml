@@ -169,6 +169,9 @@ func unzip(tmpdir string, r *zip.ReadCloser) error {
 
 	for _, f := range r.File {
 		printf("  inflating: %s\n", f.Name)
+		if f.FileInfo().IsDir() {
+			continue
+		}
 		rc, err := f.Open()
 		if err != nil {
 			printf("**error** opening [%s]: %v\n", f.Name, err)
