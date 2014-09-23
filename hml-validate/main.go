@@ -12,6 +12,7 @@ import (
 
 var (
 	g_train = flag.Bool("train", false, "switch to run the training during validation")
+	g_build = flag.Bool("build", true, "switch to build from source if possible")
 
 	trainfile = "training.csv"
 	testfile  = "test.csv"

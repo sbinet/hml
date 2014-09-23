@@ -159,7 +159,7 @@ func NewCode(dir string, train bool) (Code, error) {
 	}
 
 	// whether we need to build the code first.
-	if code.Build != "" {
+	if code.Build != "" && *g_build {
 		err = code.build(dir)
 		if err != nil {
 			return code, err
