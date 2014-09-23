@@ -91,6 +91,12 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		err = r.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 	}
 
 	// Make sure to check the error on Close.
