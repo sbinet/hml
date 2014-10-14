@@ -28,7 +28,7 @@ func printf(format string, args ...interface{}) (int, error) {
 
 func main() {
 	flag.Usage = func() {
-		fmt.Fprintf(os.Stderr, `Usage: hml-validate zipfile-or-directory [test.csv [training.csv]]
+		fmt.Fprintf(os.Stderr, `Usage: hml-validate [options] zipfile-or-directory [test.csv [training.csv]]
 
 where:
   - test.csv is a test file (taken from $PWD if not given.)
