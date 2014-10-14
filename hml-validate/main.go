@@ -8,11 +8,15 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"time"
 )
 
 var (
 	g_train = flag.Bool("train", false, "switch to run the training during validation")
 	g_build = flag.Bool("build", true, "switch to build from source if possible")
+
+	g_traintime = flag.Duration("train-time", 1*time.Hour, "maximum execution time for training step")
+	g_predtime  = flag.Duration("pred-time", 1*time.Hour, "maximum execution time for prediction step")
 
 	trainfile = "training.csv"
 	testfile  = "test.csv"

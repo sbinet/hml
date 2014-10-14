@@ -293,7 +293,7 @@ func (code Code) run_training(dir string) error {
 		errch <- cmd.Wait()
 	}()
 
-	duration := 1 * time.Hour
+	duration := *g_traintime
 	select {
 	case <-time.After(duration):
 		cmd.Process.Kill()
@@ -346,7 +346,7 @@ func (code Code) run_pred(dir string) error {
 		errch <- cmd.Wait()
 	}()
 
-	duration := 1 * time.Hour
+	duration := *g_predtime
 	select {
 	case <-time.After(duration):
 		cmd.Process.Kill()
