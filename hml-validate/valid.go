@@ -6,6 +6,7 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"syscall"
 	"time"
 )
 
@@ -277,11 +278,7 @@ func (code Code) run_training(dir string) error {
 
 	trained := pdir(dir, Def.TrainedName)
 
-	cmd := exec.Command(code.Train, code.trainfile, trained)
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	cmd.Dir = code.Root
+	cmd := code.command(code.Train, code.trainfile, trained)
 
 	start := time.Now()
 	go func() {
@@ -296,8 +293,14 @@ func (code Code) run_training(dir string) error {
 	duration := *g_traintime
 	select {
 	case <-time.After(duration):
-		cmd.Process.Kill()
-		return fmt.Errorf("hml: training timed out (%v)\n", duration)
+		pgid, err := syscall.Getpgid(cmd.Process.Pid)
+		if err == nil {
+			syscall.Kill(-pgid, syscall.SIGKILL) // note the minus sign
+		}
+
+		//err = cmd.Process.Signal(os.Kill)
+		err = fmt.Errorf("hml: training timed out (%v)\nerr=%v\n", duration, err)
+		break
 	case err = <-errch:
 		break
 	}
