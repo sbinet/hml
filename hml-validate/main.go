@@ -42,6 +42,7 @@ ex:
  $ hml-validate my-team.tar.gz
  $ hml-validate my-team /path/to/test.csv
  $ hml-validate my-team /path/to/test.csv /path/to/training.csv
+ $ hml-validate my-team -train-time=20h -pred-time=3m
 
 options:
 `,
