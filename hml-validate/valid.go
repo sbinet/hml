@@ -254,10 +254,9 @@ func (code Code) build(dir string) error {
 	duration := 1 * time.Hour
 	select {
 	case <-time.After(duration):
-		cmd.Process.Kill()
-		return fmt.Errorf("hml: building code timed out (%v)\n", duration)
+		err = code.kill(cmd.Process)
+		err = fmt.Errorf("hml: building code timed out (%v)\nerr=%v\n", duration, err)
 	case err = <-errch:
-		break
 	}
 
 	if err != nil {
@@ -277,11 +276,7 @@ func (code Code) run_training(dir string) error {
 
 	trained := pdir(dir, Def.TrainedName)
 
-	cmd := exec.Command(code.Train, code.trainfile, trained)
-	cmd.Stderr = os.Stderr
-	cmd.Stdout = os.Stdout
-	cmd.Stdin = os.Stdin
-	cmd.Dir = code.Root
+	cmd := code.command(code.Train, code.trainfile, trained)
 
 	start := time.Now()
 	go func() {
@@ -296,10 +291,9 @@ func (code Code) run_training(dir string) error {
 	duration := *g_traintime
 	select {
 	case <-time.After(duration):
-		cmd.Process.Kill()
-		return fmt.Errorf("hml: training timed out (%v)\n", duration)
+		err = code.kill(cmd.Process)
+		err = fmt.Errorf("hml: training timed out (%v)\nerr=%v\n", duration, err)
 	case err = <-errch:
-		break
 	}
 
 	if err != nil {
@@ -349,10 +343,9 @@ func (code Code) run_pred(dir string) error {
 	duration := *g_predtime
 	select {
 	case <-time.After(duration):
-		cmd.Process.Kill()
-		return fmt.Errorf("hml: prediction timed out (%v)\n", duration)
+		err = code.kill(cmd.Process)
+		err = fmt.Errorf("hml: prediction timed out (%v)\nerr=%v\n", duration, err)
 	case err = <-errch:
-		break
 	}
 
 	if err != nil {
