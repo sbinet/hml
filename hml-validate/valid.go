@@ -375,12 +375,21 @@ func (code Code) collect(outdir string) error {
 		return err
 	}
 
-	srcname := pdir(srcdir, Def.Results)
-	dstname := pdir(dstdir, Def.Results)
+	files := []string{
+		pdir(srcdir, Def.Results),
+	}
 
-	err = copyfile(dstname, srcname)
-	if err != nil {
-		return err
+	if code.DoTraining {
+		// if we ran the training, then collect the trained data file as well
+		files = append(files, pdir(code.Root, Def.WorkDir, Def.TrainedName))
+	}
+
+	for _, src := range files {
+		dst := pdir(dstdir, filepath.Base(src))
+		err = copyfile(dst, src)
+		if err != nil {
+			return err
+		}
 	}
 
 	return err
